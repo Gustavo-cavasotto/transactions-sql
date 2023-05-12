@@ -151,6 +151,28 @@ WHERE pi.ingrediente_id = 6; -- ID do fermento
 
 
 
+START TRANSACTION; -- Exclua todos os registros de produção do  último mês; 
+
+-- Obter a data atual menos um mês
+SET @data_atual = CURDATE();
+SET @data_mes_passado = DATE_SUB(@data_atual, INTERVAL 1 MONTH);
+
+-- Excluir os registros de produção do último mês
+DELETE FROM Producao
+WHERE data_producao >= @data_mes_passado AND data_producao < @data_atual;
+
+-- Verificar se houve algum erro durante a exclusão
+IF ROW_COUNT() > 0 THEN
+    -- Caso não haja erros, confirmar a transação
+    COMMIT;
+ELSE
+    -- Caso haja erros, desfazer a transação
+    ROLLBACK;
+END IF;
+
+
+
+
   
 
 
